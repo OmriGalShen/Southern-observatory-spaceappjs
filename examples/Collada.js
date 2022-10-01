@@ -137,6 +137,40 @@ requirejs(['./WorldWindShim',
             wwd.redraw();
         };
 
+        var canvas;
+
+        canvas = document.getElementById("canvasOne");
+
+
+        var bbox = canvas.getBoundingClientRect();
+
+        var xc = 500 - (bbox.left + 50);// * (this.canvas.width / bbox.width),
+        var yc = 500 - (bbox.top + 50);// * (this.canvas.height / bbox.height);
+        var lon =45;
+        var lat =-100;
+
+        setInterval(() => {
+            // wwd.removeLayer(modelLayer)
+            // wwd.addLayer(modelLayer)
+
+            // Define a position for locating the model.
+            lon = lon + 0.5;
+            lat = lat + 0.5;
+            modelLayer.removeAllRenderables();
+
+            var position = new WorldWind.Position(lon, lat, 1000e3);
+            // Create a Collada loader and direct it to the desired directory and .dae file.
+            var colladaLoader = new WorldWind.ColladaLoader(position);
+            colladaLoader.init({dirPath: modelDirPath});
+            var duckScene = null;
+            colladaLoader.load(deaFilePath, function (scene) {
+                scene.scale = 5000;
+                modelLayer.addRenderable(scene); // Add the Collada model to the renderable layer within a callback.
+                duckScene = scene;
+            });
+
+        }, 70)
+
         // Listen for mouse clicks to trigger the related event.
         wwd.addEventListener("click", handleClick);
 
