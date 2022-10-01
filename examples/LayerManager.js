@@ -70,48 +70,6 @@ define(function () {
         //});
     };
 
-    LayerManager.prototype.onProjectionClick = function (event) {
-        var projectionName = event.target.innerText || event.target.innerHTML;
-        $("#projectionDropdown").find("button").html(projectionName + ' <span class="caret"></span>');
-
-        if (projectionName === "3D") {
-            if (!this.roundGlobe) {
-                this.roundGlobe = new WorldWind.Globe(new WorldWind.EarthElevationModel());
-            }
-
-            if (this.wwd.globe !== this.roundGlobe) {
-                this.wwd.globe = this.roundGlobe;
-            }
-        } else {
-            if (!this.flatGlobe) {
-                this.flatGlobe = new WorldWind.Globe2D();
-            }
-
-            if (projectionName === "Equirectangular") {
-                this.flatGlobe.projection = new WorldWind.ProjectionEquirectangular();
-            } else if (projectionName === "Mercator") {
-                this.flatGlobe.projection = new WorldWind.ProjectionMercator();
-            } else if (projectionName === "North Polar") {
-                this.flatGlobe.projection = new WorldWind.ProjectionPolarEquidistant("North");
-            } else if (projectionName === "South Polar") {
-                this.flatGlobe.projection = new WorldWind.ProjectionPolarEquidistant("South");
-            } else if (projectionName === "North UPS") {
-                this.flatGlobe.projection = new WorldWind.ProjectionUPS("North");
-            } else if (projectionName === "South UPS") {
-                this.flatGlobe.projection = new WorldWind.ProjectionUPS("South");
-            } else if (projectionName === "North Gnomonic") {
-                this.flatGlobe.projection = new WorldWind.ProjectionGnomonic("North");
-            } else if (projectionName === "South Gnomonic") {
-                this.flatGlobe.projection = new WorldWind.ProjectionGnomonic("South");
-            }
-
-            if (this.wwd.globe !== this.flatGlobe) {
-                this.wwd.globe = this.flatGlobe;
-            }
-        }
-
-        this.wwd.redraw();
-    };
 
     LayerManager.prototype.onLayerClick = function (layerButton) {
         var layerName = layerButton.text();
@@ -201,7 +159,6 @@ define(function () {
 
 
         document.getElementById("timeID").innerHTML = utcDate;
-        console.log(utcDate);
     };
 
     LayerManager.prototype.onSearchButton = function (event) {
