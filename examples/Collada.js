@@ -74,8 +74,8 @@ requirejs(['./WorldWindShim',
         var position = new WorldWind.Position(45, -100, 1000e3);
         // Create a Collada loader and direct it to the desired directory and .dae file.
 
-        const deaFilePath = isDuck? 'duck.dae':'ISS_stationary.dae';
-        const modelDirPath = isDuck? './collada_models/duck/': './collada_models/ISS/';
+        const deaFilePath = isDuck? 'duck.dae':'iss.dae';
+        const modelDirPath = isDuck? './collada_models/duck/': './collada_models/ISS_NEW/';
 
 
         var colladaLoader = new WorldWind.ColladaLoader(position);
