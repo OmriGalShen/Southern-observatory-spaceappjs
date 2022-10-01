@@ -31,8 +31,10 @@
  */
 //getting the Time-Date from the user
 document.getElementById("timeDate").addEventListener('change', (e)=>{
-    console.log(e.target.value)
+    mydate = e.target.value
 })
+
+let mydate = new Date().toISOString()
 
 const isDuck = true;
 const API_URL = "http://127.0.0.1:5000/location";
@@ -160,7 +162,7 @@ requirejs(['./WorldWindShim',
 
         setInterval(() => {
             fetch(API_URL+'?' + new URLSearchParams({
-                time: new Date().toISOString(),
+                time: mydate,
             }))
                 .then((response) => response.json())
                 .then((data) => {
@@ -169,6 +171,7 @@ requirejs(['./WorldWindShim',
                         // lat = lat + 0.5;
                         modelLayer.removeAllRenderables();
                         console.error('data',data)
+                        console.error('mydate',mydate)
                         var position = new WorldWind.Position(data[0], data[1], data[2]);
                         // var position = new WorldWind.Position(130, -64, 1000);
                         // Create a Collada loader and direct it to the desired directory and .dae file.
