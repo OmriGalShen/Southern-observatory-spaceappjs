@@ -30,18 +30,26 @@
  * intersection points when you click on the model.
  */
 //getting the Time-Date from the user
-document.getElementById("timeDate").addEventListener('change', (e)=>{
-    mydate = e.target.value
+
+let isManualTime = false;
+
+document.getElementById("timeDate").addEventListener('change', (e) => {
+    let timeRes = e.target.value;
+    timeRes.setHours(timeRes.getHours() + 3);
+    mydate = timeRes
+    isManualTime = true;
 })
 
-let mydate = new Date().toISOString()
+var today = new Date();
+today.setHours(today.getHours() + 3);
+let mydate = today.toISOString();
 
 const isDuck = true;
 const API_URL = "http://127.0.0.1:5000/location";
 const deaFilePath = isDuck ? 'duck.dae' : 'iss.dae';
 const modelDirPath = isDuck ? './collada_models/duck/' : './collada_models/ISS_NEW/';
-const TIME_INTERVAL = 5000;
-const SCALE = 2000;
+const TIME_INTERVAL = 1000;
+const SCALE = 5000;
 
 requirejs(['./WorldWindShim',
         './LayerManager'],
@@ -159,9 +167,8 @@ requirejs(['./WorldWindShim',
         var lat = -100;
 
 
-
         setInterval(() => {
-            fetch(API_URL+'?' + new URLSearchParams({
+            fetch(API_URL + '?' + new URLSearchParams({
                 time: mydate,
             }))
                 .then((response) => response.json())
@@ -170,8 +177,8 @@ requirejs(['./WorldWindShim',
                         // lon = lon + 0.5;
                         // lat = lat + 0.5;
                         modelLayer.removeAllRenderables();
-                        console.error('data',data)
-                        console.error('mydate',mydate)
+                        console.error('data', data)
+                        console.error('mydate', mydate)
                         var position = new WorldWind.Position(data[0], data[1], data[2]);
                         // var position = new WorldWind.Position(130, -64, 1000);
                         // Create a Collada loader and direct it to the desired directory and .dae file.
@@ -183,6 +190,10 @@ requirejs(['./WorldWindShim',
                             modelLayer.addRenderable(scene); // Add the Collada model to the renderable layer within a callback.
                             duckScene = scene;
                         })
+
+                        var today = new Date();
+                        today.setHours(today.getHours() + 3);
+                        mydate = today.toISOString();
                     }
                 )
 
