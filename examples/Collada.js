@@ -31,20 +31,33 @@
  */
 //getting the Time-Date from the user
 
-let isManualTime = false;
-
-document.getElementById("timeDate").addEventListener('change', (e) => {
-    let timeRes = new Date(e.target.value);
-    timeRes.setHours(timeRes.getHours() + 3);
-    mydate = timeRes.toISOString()
-    isManualTime = true;
-})
-
+let curTime = new Date();
 var today = new Date();
 today.setHours(today.getHours() + 3);
 let mydate = today.toISOString();
 
-const isDuck = false;
+var clockElement = document.getElementById('clock');
+
+setInterval(() => {
+    curTime.setSeconds(curTime.getSeconds() + 1);
+    let temp = new Date(mydate);
+    temp.setSeconds(temp.getSeconds()+1);
+    mydate= temp.toISOString()
+    clockElement.textContent = curTime.toString();
+}, 1000);
+
+document.getElementById("timeDate").addEventListener('change', (e) => {
+    curTime = new Date(e.target.value);
+    clockElement.textContent = curTime.toString();
+    let timeRes = new Date(curTime);
+    timeRes.setHours(timeRes.getHours() + 3);
+    mydate = timeRes.toISOString()
+})
+
+
+
+
+const isDuck = true;
 const API_URL = "http://127.0.0.1:5000/location";
 const deaFilePath = isDuck ? 'duck.dae' : 'iss.dae';
 const modelDirPath = isDuck ? './collada_models/duck/' : './collada_models/ISS_NEW/';
@@ -190,11 +203,6 @@ requirejs(['./WorldWindShim',
                             modelLayer.addRenderable(scene); // Add the Collada model to the renderable layer within a callback.
                             duckScene = scene;
                         })
-                        if(!isManualTime){
-                            var newToday = new Date();
-                            newToday.setHours(newToday.getHours() + 3);
-                            mydate = today.toISOString();
-                        }
 
                     }
                 )
