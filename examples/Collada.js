@@ -29,6 +29,10 @@
  * Illustrates how to load and display a Collada 3D model onto the globe. Also shows how to calculate
  * intersection points when you click on the model.
  */
+//getting the Time-Date from the user
+document.getElementById("timeDate").addEventListener('change', (e)=>{
+    console.log(e.target.value)
+})
 
 const isDuck = true;
 
@@ -74,8 +78,8 @@ requirejs(['./WorldWindShim',
         var position = new WorldWind.Position(45, -100, 1000e3);
         // Create a Collada loader and direct it to the desired directory and .dae file.
 
-        const deaFilePath = isDuck? 'duck.dae':'iss.dae';
-        const modelDirPath = isDuck? './collada_models/duck/': './collada_models/ISS_NEW/';
+        const deaFilePath = isDuck ? 'duck.dae' : 'iss.dae';
+        const modelDirPath = isDuck ? './collada_models/duck/' : './collada_models/ISS_NEW/';
 
 
         var colladaLoader = new WorldWind.ColladaLoader(position);
@@ -146,8 +150,8 @@ requirejs(['./WorldWindShim',
 
         var xc = 500 - (bbox.left + 50);// * (this.canvas.width / bbox.width),
         var yc = 500 - (bbox.top + 50);// * (this.canvas.height / bbox.height);
-        var lon =45;
-        var lat =-100;
+        var lon = 45;
+        var lat = -100;
 
         setInterval(() => {
             // wwd.removeLayer(modelLayer)
@@ -176,4 +180,5 @@ requirejs(['./WorldWindShim',
 
         // Create a layer manager for controlling layer visibility.
         var layerManager = new LayerManager(wwd);
+
     });
