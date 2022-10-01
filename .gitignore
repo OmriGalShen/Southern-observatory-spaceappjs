@@ -13,3 +13,4 @@ nasaworldwind-worldwind-*.tgz
 node_modules/
 
 npm-debug.log
+.idea

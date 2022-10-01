@@ -30,6 +30,8 @@
  * intersection points when you click on the model.
  */
 
+const isDuck = false;
+
 requirejs(['./WorldWindShim',
         './LayerManager'],
     function (WorldWind, LayerManager) {
@@ -71,10 +73,15 @@ requirejs(['./WorldWindShim',
         // Define a position for locating the model.
         var position = new WorldWind.Position(45, -100, 1000e3);
         // Create a Collada loader and direct it to the desired directory and .dae file.
+
+        const deaFilePath = isDuck? 'duck.dae':'ISS_stationary.dae';
+        const modelDirPath = isDuck? './collada_models/duck/': './collada_models/ISS/';
+
+
         var colladaLoader = new WorldWind.ColladaLoader(position);
-        colladaLoader.init({dirPath: './collada_models/duck/'});
+        colladaLoader.init({dirPath: modelDirPath});
         var duckScene = null;
-        colladaLoader.load('duck.dae', function (scene) {
+        colladaLoader.load(deaFilePath, function (scene) {
             scene.scale = 5000;
             modelLayer.addRenderable(scene); // Add the Collada model to the renderable layer within a callback.
             duckScene = scene;
