@@ -822,7 +822,7 @@ define([
         ViewControlsLayer.prototype.handleExaggeration = function (e, control) {
             var handled = false;
             if(this.isPointerDown(e)){
-                window.location.replace("https://stellarium-web.org/");
+                window.location.replace("https://stellarium-web.org/skysource/InternationalSpaceStation?fov=120.00&date=2022-10-01T18:14:40Z&lat=32.06&lng=34.79&elev=0");
             }
             // // Start an operation on left button down or touch start.
             // if (this.isPointerDown(e) || this.isTouchStart(e)) {

@@ -29,6 +29,10 @@
  * Illustrates how to load and display a Collada 3D model onto the globe. Also shows how to calculate
  * intersection points when you click on the model.
  */
+//getting the Time-Date from the user
+document.getElementById("timeDate").addEventListener('change', (e)=>{
+    console.log(e.target.value)
+})
 
 const isDuck = true;
 const API_URL = "http://127.0.0.1:5000/location";
@@ -187,4 +191,5 @@ requirejs(['./WorldWindShim',
 
         // Create a layer manager for controlling layer visibility.
         var layerManager = new LayerManager(wwd);
+
     });
