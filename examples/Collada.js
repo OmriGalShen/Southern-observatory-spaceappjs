@@ -30,7 +30,7 @@
  * intersection points when you click on the model.
  */
 
-const isDuck = false;
+const isDuck = true;
 
 requirejs(['./WorldWindShim',
         './LayerManager'],
