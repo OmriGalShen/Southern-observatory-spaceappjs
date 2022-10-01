@@ -5,7 +5,7 @@
 .idea/tasks.xml
 
 .idea/workspace.xml
-
+.idea/
 build/
 
 nasaworldwind-worldwind-*.tgz
