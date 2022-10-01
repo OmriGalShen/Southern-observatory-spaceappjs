@@ -66,6 +66,8 @@ requirejs(['./WorldWindShim',
             // Obtain the event location.
             var x = recognizer.clientX,
                 y = recognizer.clientY;
+            console.log(recognizer.clientX)
+            console.log(recognizer.clientY)
 
             // Perform the pick. Must first convert from window coordinates to canvas coordinates, which are
             // relative to the upper left corner of the canvas rather than the upper left corner of the page.

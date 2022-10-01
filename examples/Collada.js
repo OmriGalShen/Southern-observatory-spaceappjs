@@ -67,7 +67,6 @@ requirejs(['./WorldWindShim',
         wwd.addLayer(modelLayer);
         var placemarkLayer = new WorldWind.RenderableLayer("Placemarks")
         wwd.addLayer(placemarkLayer);
-
         // Define a position for locating the model.
         var position = new WorldWind.Position(45, -100, 1000e3);
         // Create a Collada loader and direct it to the desired directory and .dae file.
@@ -129,6 +128,40 @@ requirejs(['./WorldWindShim',
             // Redraw scene with the computed results.
             wwd.redraw();
         };
+
+        var canvas;
+
+        canvas = document.getElementById("canvasOne");
+
+
+        var bbox = canvas.getBoundingClientRect();
+
+        var xc = 500 - (bbox.left + 50);// * (this.canvas.width / bbox.width),
+        var yc = 500 - (bbox.top + 50);// * (this.canvas.height / bbox.height);
+        var lon =45;
+        var lat =-100;
+
+        setInterval(() => {
+            // wwd.removeLayer(modelLayer)
+            // wwd.addLayer(modelLayer)
+
+            // Define a position for locating the model.
+            lon = lon + 0.5;
+            lat = lat + 0.5;
+            modelLayer.removeAllRenderables();
+
+            var position = new WorldWind.Position(lon, lat, 1000e3);
+            // Create a Collada loader and direct it to the desired directory and .dae file.
+            var colladaLoader = new WorldWind.ColladaLoader(position);
+            colladaLoader.init({dirPath: './collada_models/duck/'});
+            var duckScene = null;
+            colladaLoader.load('duck.dae', function (scene) {
+                scene.scale = 5000;
+                modelLayer.addRenderable(scene); // Add the Collada model to the renderable layer within a callback.
+                duckScene = scene;
+            });
+
+        }, 70)
 
         // Listen for mouse clicks to trigger the related event.
         wwd.addEventListener("click", handleClick);
