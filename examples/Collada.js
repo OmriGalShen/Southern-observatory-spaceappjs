@@ -31,6 +31,11 @@
  */
 
 const isDuck = true;
+const API_URL = "http://127.0.0.1:5000/location";
+const deaFilePath = isDuck ? 'duck.dae' : 'iss.dae';
+const modelDirPath = isDuck ? './collada_models/duck/' : './collada_models/ISS_NEW/';
+const TIME_INTERVAL = 5000;
+const SCALE = 2000;
 
 requirejs(['./WorldWindShim',
         './LayerManager'],
@@ -70,22 +75,20 @@ requirejs(['./WorldWindShim',
         var placemarkLayer = new WorldWind.RenderableLayer("Placemarks")
         wwd.addLayer(placemarkLayer);
 
-        // Define a position for locating the model.
-        var position = new WorldWind.Position(45, -100, 1000e3);
-        // Create a Collada loader and direct it to the desired directory and .dae file.
-
-        const deaFilePath = isDuck? 'duck.dae':'iss.dae';
-        const modelDirPath = isDuck? './collada_models/duck/': './collada_models/ISS_NEW/';
-
-
-        var colladaLoader = new WorldWind.ColladaLoader(position);
-        colladaLoader.init({dirPath: modelDirPath});
         var duckScene = null;
-        colladaLoader.load(deaFilePath, function (scene) {
-            scene.scale = 5000;
-            modelLayer.addRenderable(scene); // Add the Collada model to the renderable layer within a callback.
-            duckScene = scene;
-        });
+
+        // // Define a position for locating the model.
+        // var position = new WorldWind.Position(45, -100, 1000e3);
+        // // Create a Collada loader and direct it to the desired directory and .dae file.
+        //
+        //
+        // var colladaLoader = new WorldWind.ColladaLoader(position);
+        // colladaLoader.init({dirPath: modelDirPath});
+        // colladaLoader.load(deaFilePath, function (scene) {
+        //     scene.scale = 5000;
+        //     modelLayer.addRenderable(scene); // Add the Collada model to the renderable layer within a callback.
+        //     duckScene = scene;
+        // });
 
         // The following is an example of 3D ray intersaction with a COLLADA model.
         // A ray will be generated extending from the camera "eye" point towards a point in the 
@@ -146,30 +149,38 @@ requirejs(['./WorldWindShim',
 
         var xc = 500 - (bbox.left + 50);// * (this.canvas.width / bbox.width),
         var yc = 500 - (bbox.top + 50);// * (this.canvas.height / bbox.height);
-        var lon =45;
-        var lat =-100;
+        var lon = 45;
+        var lat = -100;
+
+
 
         setInterval(() => {
-            // wwd.removeLayer(modelLayer)
-            // wwd.addLayer(modelLayer)
+            fetch(API_URL+'?' + new URLSearchParams({
+                time: new Date().toISOString(),
+            }))
+                .then((response) => response.json())
+                .then((data) => {
+                        // Define a position for locating the model.
+                        // lon = lon + 0.5;
+                        // lat = lat + 0.5;
+                        modelLayer.removeAllRenderables();
+                        console.error('data',data)
+                        var position = new WorldWind.Position(data[0], data[1], data[2]);
+                        // var position = new WorldWind.Position(130, -64, 1000);
+                        // Create a Collada loader and direct it to the desired directory and .dae file.
+                        var colladaLoader = new WorldWind.ColladaLoader(position);
+                        colladaLoader.init({dirPath: modelDirPath});
+                        var duckScene = null;
+                        colladaLoader.load(deaFilePath, function (scene) {
+                            scene.scale = SCALE;
+                            modelLayer.addRenderable(scene); // Add the Collada model to the renderable layer within a callback.
+                            duckScene = scene;
+                        })
+                    }
+                )
 
-            // Define a position for locating the model.
-            lon = lon + 0.5;
-            lat = lat + 0.5;
-            modelLayer.removeAllRenderables();
 
-            var position = new WorldWind.Position(lon, lat, 1000e3);
-            // Create a Collada loader and direct it to the desired directory and .dae file.
-            var colladaLoader = new WorldWind.ColladaLoader(position);
-            colladaLoader.init({dirPath: modelDirPath});
-            var duckScene = null;
-            colladaLoader.load(deaFilePath, function (scene) {
-                scene.scale = 5000;
-                modelLayer.addRenderable(scene); // Add the Collada model to the renderable layer within a callback.
-                duckScene = scene;
-            });
-
-        }, 70)
+        }, TIME_INTERVAL)
 
         // Listen for mouse clicks to trigger the related event.
         wwd.addEventListener("click", handleClick);
