@@ -477,8 +477,7 @@ define([
         ViewControlsLayer.prototype.isPointerDown = function (e) {
             if (e.type === "pointerdown") {
                 return true;
-            }
-            else if (e.type === "mousedown" && e.which === 1) {
+            } else if (e.type === "mousedown" && e.which === 1) {
                 return true;
             }
 
@@ -489,8 +488,7 @@ define([
         ViewControlsLayer.prototype.isPointerUp = function (e) {
             if (e.type === "pointerup") {
                 return true;
-            }
-            else if (e.type === "mouseup" && e.which === 1) {
+            } else if (e.type === "mouseup" && e.which === 1) {
                 return true;
             }
 
@@ -501,8 +499,7 @@ define([
         ViewControlsLayer.prototype.isPointerMove = function (e) {
             if (e.type === "pointermove") {
                 return true;
-            }
-            else if (e.type === "mousemove") {
+            } else if (e.type === "mousemove") {
                 return true;
             }
 
@@ -543,11 +540,9 @@ define([
             if (e.type && this.activeControl) {
                 if (this.isPointerUp(e)) {
                     terminateActive = true;
-                }
-                else if (this.isTouchEnd(e) && this.isCurrentTouch(e)) {
+                } else if (this.isTouchEnd(e) && this.isCurrentTouch(e)) {
                     terminateActive = true;
-                }
-                else {
+                } else {
                     topObject = this.pickControl(e);
                     if (this.activeControl !== topObject) {
                         terminateActive = true;
@@ -602,8 +597,7 @@ define([
                 var touch = e.changedTouches.item(0);
                 cx = touch.clientX;
                 cy = touch.clientY;
-            }
-            else {
+            } else {
                 cx = e.clientX;
                 cy = e.clientY;
             }
@@ -827,35 +821,38 @@ define([
         // Intentionally not documented.
         ViewControlsLayer.prototype.handleExaggeration = function (e, control) {
             var handled = false;
-
-            // Start an operation on left button down or touch start.
-            if (this.isPointerDown(e) || this.isTouchStart(e)) {
-                this.activeControl = control;
-                this.activeOperation = this.handleExaggeration;
-                e.preventDefault();
-
-                if (this.isTouchStart(e)) {
-                    this.currentTouchId = e.changedTouches.item(0).identifier; // capture the touch identifier
-                }
-
-                // This function is called by the timer to perform the operation.
-                var thisLayer = this; // capture 'this' for use in the function
-                var setExaggeration = function () {
-                    if (thisLayer.activeControl) {
-                        if (thisLayer.activeControl === thisLayer.exaggerationUpControl) {
-                            thisLayer.wwd.verticalExaggeration += thisLayer.exaggerationIncrement;
-                        } else if (thisLayer.activeControl === thisLayer.exaggerationDownControl) {
-                            thisLayer.wwd.verticalExaggeration =
-                                Math.max(1, thisLayer.wwd.verticalExaggeration - thisLayer.exaggerationIncrement);
-                        }
-                        thisLayer.wwd.redraw();
-                        setTimeout(setExaggeration, 50);
-                    }
-                };
-                setTimeout(setExaggeration, 50);
-
-                handled = true;
+            if(this.isPointerDown(e)){
+                window.location.replace("https://stellarium-web.org/");
             }
+            // // Start an operation on left button down or touch start.
+            // if (this.isPointerDown(e) || this.isTouchStart(e)) {
+            //     this.activeControl = control;
+            //     this.activeOperation = this.handleExaggeration;
+            //     e.preventDefault();
+            //
+            //     if (this.isTouchStart(e)) {
+            //         this.currentTouchId = e.changedTouches.item(0).identifier; // capture the touch identifier
+            //     }
+            //
+            //     // This function is called by the timer to perform the operation.
+            //     var thisLayer = this; // capture 'this' for use in the function
+            //     var setExaggeration = function () {
+            //         if (thisLayer.activeControl) {
+            //             // if (thisLayer.activeControl === thisLayer.exaggerationUpControl) {
+            //             //     thisLayer.wwd.verticalExaggeration += thisLayer.exaggerationIncrement;
+            //             // } else if (thisLayer.activeControl === thisLayer.exaggerationDownControl) {
+            //             //     thisLayer.wwd.verticalExaggeration =
+            //             //         Math.max(1, thisLayer.wwd.verticalExaggeration - thisLayer.exaggerationIncrement);
+            //             // }
+            //             // thisLayer.wwd.redraw();
+            //             window.location.replace("https://stellarium-web.org/");
+            //             setTimeout(setExaggeration, 50);
+            //         }
+            //     };
+            //     setTimeout(setExaggeration, 50);
+            //
+            //     handled = true;
+            // }
 
             return handled;
         };
