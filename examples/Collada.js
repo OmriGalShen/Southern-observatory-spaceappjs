@@ -54,9 +54,12 @@ document.getElementById("timeDate").addEventListener('change', (e) => {
     mydate = timeRes.toISOString()
 })
 
+const inputTime = document.getElementById("timeDate")
+
 
 const isDuck = true;
 const API_URL = "http://127.0.0.1:5000/location";
+const API_URL_LIMIT = "http://127.0.0.1:5000/limits";
 const deaFilePath = isDuck ? 'duck.dae' : 'iss.dae';
 const modelDirPath = isDuck ? './collada_models/duck/' : './collada_models/ISS_NEW/';
 const TIME_INTERVAL = 6000;
@@ -252,7 +255,8 @@ requirejs(['./WorldWindShim',
 
         setInterval(() => {
             fetch(API_URL + '?' + new URLSearchParams({
-                time: mydate
+                time: mydate,
+                satellite: 0
             }))
                 .then((response) => response.json())
                 .then((data) => {
@@ -288,6 +292,19 @@ requirejs(['./WorldWindShim',
 
         // Listen for mouse clicks to trigger the related event.
         wwd.addEventListener("click", handleClick);
+        //Adding min and max dates for viewing
+        setInterval(() => {
+            fetch(API_URL_LIMIT + '?' + new URLSearchParams({
+                satellite: 0
+            }))
+                .then((response) => response.json())
+                .then((data) => {
+                    const minDate = new Date(data[0])
+                    inputTime.setAttribute('min', minDate.toISOString().substring(0,minDate.toISOString().lastIndexOf(':')));
+                    const maxDate = new Date(data[1])
+                    inputTime.setAttribute('max', maxDate.toISOString().substring(0,maxDate.toISOString().lastIndexOf(':')));
+                })
+        }, TIME_INTERVAL);
 
         // Create a layer manager for controlling layer visibility.
         var layerManager = new LayerManager(wwd);
