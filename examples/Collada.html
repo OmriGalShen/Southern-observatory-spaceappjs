@@ -31,11 +31,15 @@
                 <input type="datetime-local" id="timeDate"><br/>
             </form>
             <br/>
-            <form>
-                <label>Time until visible in:</label><br/>
-                <input type="text" id="visibleIn"><br/>
-                <div class="time" id="timeUntilVisible"></div>
-            </form>
+            <div>
+                <label>Time until visible in:</label>
+                <button id="location_button">Choose Location</button>
+            </div>
+            <br/>
+            <div>
+                <button id="collisionButton">Show Collision Data</button>
+                <label id="collisionLabel"></label>
+            </div>
         </div>
         <div class="col-sm-9" id="globe">
             <canvas id="canvasOne" width="1000" height="1000"
