@@ -65,9 +65,7 @@ const inputTime = document.getElementById("timeDate")
 
 const isDuck = false;
 
-const API_URL = "http://127.0.0.1:5000/location";
-
-
+const API_URL_LOCATION = "http://127.0.0.1:5000/location";
 const API_URL_LIMIT = "http://127.0.0.1:5000/limits";
 const API_URL_COLLISION = "http://127.0.0.1:5000/collision";
 const API_URL_POST_COOR = "http://127.0.0.1:5000/arrival";
@@ -227,7 +225,7 @@ requirejs(['./WorldWindShim',
         var lon = 45;
         var lat = -100;
 
-        //night sky
+        //****NIGHT SKY****
 
         // Create imagery layers.
         var BMNGOneImageLayer = new WorldWind.BMNGOneImageLayer();
@@ -302,7 +300,7 @@ requirejs(['./WorldWindShim',
 
         //reading coordinates based on dates
         setInterval(() => {
-            fetch(API_URL + '?' + new URLSearchParams({
+            fetch(API_URL_LOCATION + '?' + new URLSearchParams({
                 time: mydate,
                 satellite: 0
             }))
@@ -344,8 +342,9 @@ requirejs(['./WorldWindShim',
             const mydate2 = new Date(mydate);
 
             for (let i = 0; i < 6; i++) {
-                fetch(API_URL + '?' + new URLSearchParams({
-                    time: mydate2.toISOString()
+                fetch(API_URL_LOCATION + '?' + new URLSearchParams({
+                    time: mydate2.toISOString(),
+                    satellite: 0
                 }))
                     .then((response) => response.json())
                     .then((data) => {
