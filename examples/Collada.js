@@ -54,12 +54,21 @@ document.getElementById("timeDate").addEventListener('change', (e) => {
     mydate = timeRes.toISOString()
 })
 
+document.getElementById("collisionButton").addEventListener('click', () => {
+    fetch(API_URL_COLLISION + '?' + new URLSearchParams({satellite1: 0, satellite2: 1}))
+        .then((response) => response.json())
+        .then((data) => {
+            document.getElementById("collisionLabel").innerText = "A collision will occur at\n"+data.toString();
+        })
+})
+
 const inputTime = document.getElementById("timeDate")
 
 
 const isDuck = true;
 const API_URL = "http://127.0.0.1:5000/location";
 const API_URL_LIMIT = "http://127.0.0.1:5000/limits";
+const API_URL_COLLISION = "http://127.0.0.1:5000/collision";
 const deaFilePath = isDuck ? 'duck.dae' : 'iss.dae';
 const modelDirPath = isDuck ? './collada_models/duck/' : './collada_models/ISS_NEW/';
 const TIME_INTERVAL = 6000;
@@ -253,6 +262,7 @@ requirejs(['./WorldWindShim',
 
         //END ADD CIRCLE
 
+        //reading coordinates based on dates
         setInterval(() => {
             fetch(API_URL + '?' + new URLSearchParams({
                 time: mydate,
@@ -300,11 +310,12 @@ requirejs(['./WorldWindShim',
                 .then((response) => response.json())
                 .then((data) => {
                     const minDate = new Date(data[0])
-                    inputTime.setAttribute('min', minDate.toISOString().substring(0,minDate.toISOString().lastIndexOf(':')));
+                    inputTime.setAttribute('min', minDate.toISOString().substring(0, minDate.toISOString().lastIndexOf(':')));
                     const maxDate = new Date(data[1])
-                    inputTime.setAttribute('max', maxDate.toISOString().substring(0,maxDate.toISOString().lastIndexOf(':')));
+                    inputTime.setAttribute('max', maxDate.toISOString().substring(0, maxDate.toISOString().lastIndexOf(':')));
                 })
         }, TIME_INTERVAL);
+
 
         // Create a layer manager for controlling layer visibility.
         var layerManager = new LayerManager(wwd);
