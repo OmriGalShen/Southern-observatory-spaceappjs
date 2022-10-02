@@ -29,8 +29,40 @@
  * Illustrates how to load and display a Collada 3D model onto the globe. Also shows how to calculate
  * intersection points when you click on the model.
  */
+//getting the Time-Date from the user
+
+let curTime = new Date();
+var today = new Date();
+today.setHours(today.getHours() + 3);
+let mydate = today.toISOString();
+
+var clockElement = document.getElementById('clock');
+
+setInterval(() => {
+    curTime.setSeconds(curTime.getSeconds() + 1);
+    let temp = new Date(mydate);
+    temp.setSeconds(temp.getSeconds() + 1);
+    mydate = temp.toISOString()
+    clockElement.textContent = curTime.toString();
+}, 1000);
+
+document.getElementById("timeDate").addEventListener('change', (e) => {
+    curTime = new Date(e.target.value);
+    clockElement.textContent = curTime.toString();
+    let timeRes = new Date(curTime);
+    timeRes.setHours(timeRes.getHours() + 3);
+    mydate = timeRes.toISOString()
+})
+
 
 const isDuck = false;
+const API_URL = "http://127.0.0.1:5000/location";
+const deaFilePath = isDuck ? 'duck.dae' : 'iss3.dae';
+const modelDirPath = isDuck ? './collada_models/duck/' : './collada_models/ISS_NEW/';
+const golfDirPath = "./collada_models/golf/"
+const deaGolfFilePath = 'golf.dae'
+const TIME_INTERVAL = 6000;
+const SCALE = 5000;
 
 requirejs(['./WorldWindShim',
         './LayerManager'],
@@ -67,25 +99,25 @@ requirejs(['./WorldWindShim',
         // Create renderable layer to hold the Collada model.
         var modelLayer = new WorldWind.RenderableLayer("Duck");
         wwd.addLayer(modelLayer);
+        var modelLayerGolf = new WorldWind.RenderableLayer("Golf");
+        wwd.addLayer(modelLayerGolf);
         var placemarkLayer = new WorldWind.RenderableLayer("Placemarks")
         wwd.addLayer(placemarkLayer);
 
-        // Define a position for locating the model.
-        var position = new WorldWind.Position(45, -100, 1000e3);
-        // Create a Collada loader and direct it to the desired directory and .dae file.
-
-        const deaFilePath = isDuck? 'duck.dae':'iss.dae';
-        const modelDirPath = isDuck? './collada_models/duck/': './collada_models/ISS_NEW/';
-
-
-        var colladaLoader = new WorldWind.ColladaLoader(position);
-        colladaLoader.init({dirPath: modelDirPath});
         var duckScene = null;
-        colladaLoader.load(deaFilePath, function (scene) {
-            scene.scale = 5000;
-            modelLayer.addRenderable(scene); // Add the Collada model to the renderable layer within a callback.
-            duckScene = scene;
-        });
+
+        // // Define a position for locating the model.
+        // var position = new WorldWind.Position(45, -100, 1000e3);
+        // // Create a Collada loader and direct it to the desired directory and .dae file.
+        //
+        //
+        // var colladaLoader = new WorldWind.ColladaLoader(position);
+        // colladaLoader.init({dirPath: modelDirPath});
+        // colladaLoader.load(deaFilePath, function (scene) {
+        //     scene.scale = 5000;
+        //     modelLayer.addRenderable(scene); // Add the Collada model to the renderable layer within a callback.
+        //     duckScene = scene;
+        // });
 
         // The following is an example of 3D ray intersaction with a COLLADA model.
         // A ray will be generated extending from the camera "eye" point towards a point in the 
@@ -146,35 +178,127 @@ requirejs(['./WorldWindShim',
 
         var xc = 500 - (bbox.left + 50);// * (this.canvas.width / bbox.width),
         var yc = 500 - (bbox.top + 50);// * (this.canvas.height / bbox.height);
-        var lon =45;
-        var lat =-100;
-        var lon2 =400;
-        var lat2 =400;
+
+        var lon = 45;
+        var lat = -100;
+
+        //night sky
+
+        // Create imagery layers.
+        var BMNGOneImageLayer = new WorldWind.BMNGOneImageLayer();
+        var BMNGLayer = new WorldWind.BMNGLayer();
+        wwd.addLayer(BMNGOneImageLayer);
+        wwd.addLayer(BMNGLayer);
+
+        // Use the StarField layer to show stars and the Sun around the globe, and the Atmosphere layer to display
+        // the atmosphere effect and the night side of the Earth.
+        // Note that the StarField layer requires a dark canvas background color.
+        // The StarField layer should be added before the Atmosphere layer.
+        var starFieldLayer = new WorldWind.StarFieldLayer();
+        var atmosphereLayer = new WorldWind.AtmosphereLayer();
+        wwd.addLayer(starFieldLayer);
+        wwd.addLayer(atmosphereLayer);
+
+        // Set a date property for the StarField and Atmosphere layers to the current date and time.
+        // This enables the Atmosphere layer to show a night side (and dusk/dawn effects in Earth's terminator).
+        // The StarField layer positions its stars according to this date.
+        var now = new Date();
+        starFieldLayer.time = now;
+        atmosphereLayer.time = now;
+
+        // In this example, each full day/night cycle lasts 8 seconds in real time.
+        var simulatedMillisPerDay = 86400000;
+
+        // Begin the simulation at the current time as provided by the browser.
+        var startTimeMillis = Date.now();
+
+        function runSimulation() {
+            // Compute the number of simulated days (or fractions of a day) since the simulation began.
+            var elapsedTimeMillis = Date.now() - startTimeMillis;
+            var simulatedDays = elapsedTimeMillis / simulatedMillisPerDay;
+
+            // Compute a real date in the future given the simulated number of days.
+            var millisPerDay = 24 * 3600 * 1000; // 24 hours/day * 3600 seconds/hour * 1000 milliseconds/second
+            var simulatedMillis = simulatedDays * millisPerDay;
+            var simulatedDate = new Date(startTimeMillis + simulatedMillis);
+
+            // Update the date in both the Starfield and the Atmosphere layers.
+            starFieldLayer.time = simulatedDate;
+            atmosphereLayer.time = simulatedDate;
+            wwd.redraw(); // Update the WorldWindow scene.
+
+            requestAnimationFrame(runSimulation);
+        }
+
+        // Animate the starry sky as well as the globe's day/night cycle.
+        requestAnimationFrame(runSimulation);
+        //end night sky
+
         setInterval(() => {
-            // wwd.removeLayer(modelLayer)
-            // wwd.addLayer(modelLayer)
+            fetch(API_URL + '?' + new URLSearchParams({
+                time: mydate
+            }))
+                .then((response) => response.json())
+                .then((data) => {
+                        // Define a position for locating the model.
+                        // lon = lon + 0.5;
+                        // lat = lat + 0.5;
+                        modelLayer.removeAllRenderables();
+                        modelLayerGolf.removeAllRenderables();
 
-            // Define a position for locating the model.
-            lon = lon + 0.5;
-            lat = lat + 0.5;
-            modelLayer.removeAllRenderables();
+                        console.error('data', data)
+                        console.error('mydate', mydate)
+                        var position = new WorldWind.Position(data[0], data[1], data[2]);
+                        // var position = new WorldWind.Position(130, -64, 1000);
+                        // Create a Collada loader and direct it to the desired directory and .dae file.
+                        var colladaLoader = new WorldWind.ColladaLoader(position);
+                        colladaLoader.init({dirPath: modelDirPath});
+                        var duckScene = null;
+                        colladaLoader.load(deaFilePath, function (scene) {
+                            scene.scale = SCALE;
+                            modelLayer.addRenderable(scene); // Add the Collada model to the renderable layer within a callback.
+                            duckScene = scene;
+                        });
 
-            var position = new WorldWind.Position(lon, lat, 1000e3);
-            // Create a Collada loader and direct it to the desired directory and .dae file.
-            var colladaLoader = new WorldWind.ColladaLoader(position);
-            colladaLoader.init({dirPath: modelDirPath});
-            var duckScene = null;
-            colladaLoader.load(deaFilePath, function (scene) {
-                scene.scale = 5000;
-                modelLayer.addRenderable(scene); // Add the Collada model to the renderable layer within a callback.
-                duckScene = scene;
-            });
+                    }
+                )
+        }, TIME_INTERVAL)
 
-        }, 70)
+
+        //end night sky
+
+        setInterval(() => {
+            const mydate2 = new Date(mydate);
+
+            for (let i = 0; i < 8; i++) {
+                fetch(API_URL + '?' + new URLSearchParams({
+                    time: mydate2.toISOString()
+                }))
+                    .then((response) => response.json())
+                    .then((data) => {
+
+                            console.error();
+                            var position2 = new WorldWind.Position(data[0], data[1], data[2]);
+                            // var position = new WorldWind.Position(130, -64, 1000);
+                            // Create a Collada loader and direct it to the desired directory and .dae file.
+                            var colladaLoader2 = new WorldWind.ColladaLoader(position2);
+                            colladaLoader2.init({dirPath: golfDirPath});
+                            var golfScene = null;
+                            colladaLoader2.load(deaGolfFilePath, function (scene) {
+                                scene.scale = SCALE;
+                                modelLayerGolf.addRenderable(scene); // Add the Collada model to the renderable layer within a callback.
+                                golfScene = scene;
+                            });
+                        }
+                    )
+                mydate2.setMinutes(mydate2.getMinutes() + 1);
+            }
+                }, TIME_INTERVAL)
 
         // Listen for mouse clicks to trigger the related event.
         wwd.addEventListener("click", handleClick);
 
         // Create a layer manager for controlling layer visibility.
         var layerManager = new LayerManager(wwd);
+
     });
