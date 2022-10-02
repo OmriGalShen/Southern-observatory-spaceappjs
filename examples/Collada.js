@@ -207,7 +207,7 @@ requirejs(['./WorldWindShim',
                         latitude: position.latitude,
                         longitude: position.longitude,
                         satellite: 0
-                    })).then(()=>{
+                    })).then(() => {
                         location_button_clicked = false;
                     })
                 }
@@ -308,35 +308,33 @@ requirejs(['./WorldWindShim',
             }))
                 .then((response) => response.json())
                 .then((data) => {
-                        // Define a position for locating the model.
-                        // lon = lon + 0.5;
-                        // lat = lat + 0.5;
-                        modelLayer.removeAllRenderables();
-                        modelLayerGolf.removeAllRenderables();
+                    // Define a position for locating the model.
+                    // lon = lon + 0.5;
+                    // lat = lat + 0.5;
+                    modelLayer.removeAllRenderables();
+                    modelLayerGolf.removeAllRenderables();
 
-                        console.error('data', data)
-                        console.error('mydate', mydate)
-                        var position = new WorldWind.Position(data[0], data[1], data[2]);
-                        // var position = new WorldWind.Position(130, -64, 1000);
-                        // Create a Collada loader and direct it to the desired directory and .dae file.
-                        var colladaLoader = new WorldWind.ColladaLoader(position);
-                        colladaLoader.init({dirPath: modelDirPath});
-                        var duckScene = null;
-                        colladaLoader.load(deaFilePath, function (scene) {
-                            scene.scale = SCALE;
-                            modelLayer.addRenderable(scene); // Add the Collada model to the renderable layer within a callback.
-                            duckScene = scene;
-                        });
+                    console.error('data', data)
+                    console.error('mydate', mydate)
+                    var position = new WorldWind.Position(data[0], data[1], data[2]);
+                    // var position = new WorldWind.Position(130, -64, 1000);
+                    // Create a Collada loader and direct it to the desired directory and .dae file.
+                    var colladaLoader = new WorldWind.ColladaLoader(position);
+                    colladaLoader.init({dirPath: modelDirPath});
+                    var duckScene = null;
+                    colladaLoader.load(deaFilePath, function (scene) {
+                        scene.scale = SCALE;
+                        modelLayer.addRenderable(scene); // Add the Collada model to the renderable layer within a callback.
+                        duckScene = scene;
+                    });
 
-                        })
-                        shapesLayer.removeAllRenderables();
-                        // Create a surface circle with a radius of 200 km.
-                        var circle = new WorldWind.SurfaceCircle(new WorldWind.Location(data[0], data[1]), 200e3, attributes);
-                        circle.highlightAttributes = highlightAttributes;
-                        shapesLayer.addRenderable(circle);
 
-                    }
-                )
+                    shapesLayer.removeAllRenderables();
+                    // Create a surface circle with a radius of 200 km.
+                    var circle = new WorldWind.SurfaceCircle(new WorldWind.Location(data[0], data[1]), 200e3, attributes);
+                    circle.highlightAttributes = highlightAttributes;
+                    shapesLayer.addRenderable(circle);
+                })
         }, TIME_INTERVAL)
 
 
@@ -368,7 +366,7 @@ requirejs(['./WorldWindShim',
                     )
                 mydate2.setMinutes(mydate2.getMinutes() + 1);
             }
-                }, TIME_INTERVAL)
+        }, TIME_INTERVAL)
 
         // Listen for mouse clicks to trigger the related event.
         wwd.addEventListener("click", handleClick);
@@ -394,7 +392,6 @@ requirejs(['./WorldWindShim',
 //         var handleClickForPos = function (recognizer) {
 //
 //         };
-
-
     });
+
 
