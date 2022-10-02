@@ -58,21 +58,29 @@ document.getElementById("collisionButton").addEventListener('click', () => {
     fetch(API_URL_COLLISION + '?' + new URLSearchParams({satellite1: 0, satellite2: 1}))
         .then((response) => response.json())
         .then((data) => {
-            document.getElementById("collisionLabel").innerText = "A collision will occur at\n"+data.toString();
+            document.getElementById("collisionLabel").innerText = "A collision will occur at\n" + data.toString();
         })
 })
-
 const inputTime = document.getElementById("timeDate")
 
-
 const isDuck = true;
+
 const API_URL = "http://127.0.0.1:5000/location";
+
+
 const API_URL_LIMIT = "http://127.0.0.1:5000/limits";
 const API_URL_COLLISION = "http://127.0.0.1:5000/collision";
+const API_URL_POST_COOR = "http://127.0.0.1:5000/arrival";
 const deaFilePath = isDuck ? 'duck.dae' : 'iss.dae';
 const modelDirPath = isDuck ? './collada_models/duck/' : './collada_models/ISS_NEW/';
 const TIME_INTERVAL = 6000;
 const SCALE = 5000;
+let location_button_clicked = false;
+
+document.getElementById("location_button").addEventListener('click', () => {
+    location_button_clicked = true
+});
+
 
 requirejs(['./WorldWindShim',
         './LayerManager'],
@@ -128,7 +136,7 @@ requirejs(['./WorldWindShim',
         // });
 
         // The following is an example of 3D ray intersaction with a COLLADA model.
-        // A ray will be generated extending from the camera "eye" point towards a point in the 
+        // A ray will be generated extending from the camera "eye" point towards a point in the
         // COLLADA model where the user has clicked, then the intersections between this ray and the model
         // will be computed and displayed.
 
@@ -176,6 +184,31 @@ requirejs(['./WorldWindShim',
             // Redraw scene with the computed results.
             wwd.redraw();
         };
+
+        //LISTEN FOR LOCATION CLICKS
+        // Listen for mouse clicks.
+        new WorldWind.ClickRecognizer(wwd, (recognizer) => {
+            // Obtain the event location.
+
+            var x = recognizer.clientX,
+                y = recognizer.clientY;
+            // Perform the pick. Must first convert from window coordinates to canvas coordinates, which are
+            // relative to the upper left corner of the canvas rather than the upper left corner of the page.
+            var pickList = wwd.pick(wwd.canvasCoordinates(x, y));
+            // If only one thing is picked and it is the terrain, tell the WorldWindow to go to the picked location.
+            if (pickList.objects.length === 1 && pickList.objects[0].isTerrain) {
+                var position = pickList.objects[0].position;
+                if (location_button_clicked) {
+                    fetch(API_URL_POST_COOR + '?' + new URLSearchParams({
+                        latitude: position.latitude,
+                        longitude: position.longitude,
+                        satellite: 0
+                    })).then(()=>{
+                        location_button_clicked = false;
+                    })
+                }
+            }
+        });
 
         var canvas;
 
@@ -320,4 +353,11 @@ requirejs(['./WorldWindShim',
         // Create a layer manager for controlling layer visibility.
         var layerManager = new LayerManager(wwd);
 
+// The common gesture-handling function.
+//         var handleClickForPos = function (recognizer) {
+//
+//         };
+
+
     });
+
