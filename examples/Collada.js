@@ -345,7 +345,9 @@ requirejs(['./WorldWindShim',
 
             for (let i = 0; i < 6; i++) {
                 fetch(API_URL + '?' + new URLSearchParams({
-                    time: mydate2.toISOString()
+                    time: mydate2.toISOString(),
+                    satellite: 0
+
                 }))
                     .then((response) => response.json())
                     .then((data) => {
