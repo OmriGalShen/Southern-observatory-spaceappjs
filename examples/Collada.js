@@ -148,7 +148,8 @@ requirejs(['./WorldWindShim',
         var yc = 500 - (bbox.top + 50);// * (this.canvas.height / bbox.height);
         var lon =45;
         var lat =-100;
-
+        var lon2 =400;
+        var lat2 =400;
         setInterval(() => {
             // wwd.removeLayer(modelLayer)
             // wwd.addLayer(modelLayer)
