@@ -227,7 +227,7 @@ requirejs(['./WorldWindShim',
         var lon = 45;
         var lat = -100;
 
-        //night sky
+        //****NIGHT SKY****
 
         // Create imagery layers.
         var BMNGOneImageLayer = new WorldWind.BMNGOneImageLayer();
