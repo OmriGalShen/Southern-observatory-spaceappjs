@@ -41,8 +41,8 @@ var clockElement = document.getElementById('clock');
 setInterval(() => {
     curTime.setSeconds(curTime.getSeconds() + 1);
     let temp = new Date(mydate);
-    temp.setSeconds(temp.getSeconds()+1);
-    mydate= temp.toISOString()
+    temp.setSeconds(temp.getSeconds() + 1);
+    mydate = temp.toISOString()
     clockElement.textContent = curTime.toString();
 }, 1000);
 
@@ -53,8 +53,6 @@ document.getElementById("timeDate").addEventListener('change', (e) => {
     timeRes.setHours(timeRes.getHours() + 3);
     mydate = timeRes.toISOString()
 })
-
-
 
 
 const isDuck = true;
@@ -229,7 +227,28 @@ requirejs(['./WorldWindShim',
 
         // Animate the starry sky as well as the globe's day/night cycle.
         requestAnimationFrame(runSimulation);
-        //end night sky
+        //END NIGHT SKY
+
+        //ADD CIRCLE
+        var shapesLayer = new WorldWind.RenderableLayer("Surface Shapes");
+        wwd.addLayer(shapesLayer);
+
+        // Create and set common attributes for the surface shapes.
+        // Real apps typically create new attributes objects for each shape unless they know the attributes
+        // can be shared among all shapes.
+        var attributes = new WorldWind.ShapeAttributes(null);
+        attributes.outlineColor = WorldWind.Color.WHITE;
+        attributes.interiorColor = new WorldWind.Color(1, 1, 1, 1);
+
+        // Create common highlight attributes. These are displayed whenever the user hovers over the shapes.
+        var highlightAttributes = new WorldWind.ShapeAttributes(attributes);
+        highlightAttributes.interiorColor = new WorldWind.Color(1, 1, 1, 1);
+
+
+        // Set up a highlight controller to handle highlighting when the user hovers the shapes.
+        var highlightController = new WorldWind.HighlightController(wwd);
+
+        //END ADD CIRCLE
 
         setInterval(() => {
             fetch(API_URL + '?' + new URLSearchParams({
@@ -253,7 +272,13 @@ requirejs(['./WorldWindShim',
                             scene.scale = SCALE;
                             modelLayer.addRenderable(scene); // Add the Collada model to the renderable layer within a callback.
                             duckScene = scene;
+
                         })
+                        shapesLayer.removeAllRenderables();
+                        // Create a surface circle with a radius of 200 km.
+                        var circle = new WorldWind.SurfaceCircle(new WorldWind.Location(data[0], data[1]), 200e3, attributes);
+                        circle.highlightAttributes = highlightAttributes;
+                        shapesLayer.addRenderable(circle);
 
                     }
                 )
