@@ -63,7 +63,7 @@ document.getElementById("collisionButton").addEventListener('click', () => {
 })
 const inputTime = document.getElementById("timeDate")
 
-const isDuck = true;
+const isDuck = false;
 
 const API_URL = "http://127.0.0.1:5000/location";
 
@@ -71,7 +71,7 @@ const API_URL = "http://127.0.0.1:5000/location";
 const API_URL_LIMIT = "http://127.0.0.1:5000/limits";
 const API_URL_COLLISION = "http://127.0.0.1:5000/collision";
 const API_URL_POST_COOR = "http://127.0.0.1:5000/arrival";
-const deaFilePath = isDuck ? 'duck.dae' : 'iss.dae';
+const deaFilePath = isDuck ? 'duck.dae' : 'iss3.dae';
 const modelDirPath = isDuck ? './collada_models/duck/' : './collada_models/ISS_NEW/';
 const golfDirPath = "./collada_models/golf/"
 const deaGolfFilePath = 'golf.dae'
@@ -343,7 +343,7 @@ requirejs(['./WorldWindShim',
         setInterval(() => {
             const mydate2 = new Date(mydate);
 
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < 6; i++) {
                 fetch(API_URL + '?' + new URLSearchParams({
                     time: mydate2.toISOString()
                 }))
