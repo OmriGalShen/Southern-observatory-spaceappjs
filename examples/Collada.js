@@ -69,6 +69,8 @@ const API_URL_LOCATION = "http://127.0.0.1:5000/location";
 const API_URL_LIMIT = "http://127.0.0.1:5000/limits";
 const API_URL_COLLISION = "http://127.0.0.1:5000/collision";
 const API_URL_POST_COOR = "http://127.0.0.1:5000/arrival";
+const API_URL_POST_ZOOM = "http://127.0.0.1:5000/zoom";
+
 const deaFilePath = isDuck ? 'duck.dae' : 'iss3.dae';
 const modelDirPath = isDuck ? './collada_models/duck/' : './collada_models/ISS_NEW/';
 const golfDirPath = "./collada_models/golf/"
@@ -321,7 +323,7 @@ requirejs(['./WorldWindShim',
                     colladaLoader.init({dirPath: modelDirPath});
                     var duckScene = null;
                     colladaLoader.load(deaFilePath, function (scene) {
-                        scene.scale = SCALE;
+                        scene.scale = 4000;
                         modelLayer.addRenderable(scene); // Add the Collada model to the renderable layer within a callback.
                         duckScene = scene;
                     });
@@ -365,7 +367,7 @@ requirejs(['./WorldWindShim',
                     )
                 mydate2.setMinutes(mydate2.getMinutes() + 1);
             }
-        }, TIME_INTERVAL)
+        }, TIME_INTERVAL);
 
         // Listen for mouse clicks to trigger the related event.
         wwd.addEventListener("click", handleClick);
@@ -383,7 +385,16 @@ requirejs(['./WorldWindShim',
                 })
         }, TIME_INTERVAL);
 
-
+        setInterval(() => {
+                fetch(API_URL_POST_ZOOM)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log("7 BOOM ",data);
+                        if(data === true) {
+                         window.location.replace("https://stellarium-web.org/skysource/InternationalSpaceStation?fov=120.00&date=2022-10-01T18:14:40Z&lat=32.06&lng=34.79&elev=0");
+                        }
+                        })
+            }, 1000);
         // Create a layer manager for controlling layer visibility.
         var layerManager = new LayerManager(wwd);
 
