@@ -204,6 +204,7 @@ requirejs(['./WorldWindShim',
                     fetch(API_URL_POST_COOR + '?' + new URLSearchParams({
                         latitude: position.latitude,
                         longitude: position.longitude,
+                        altitude: 0,
                         satellite: 0
                     })).then(() => {
                         location_button_clicked = false;
